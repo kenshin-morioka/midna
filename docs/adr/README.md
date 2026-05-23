@@ -1,48 +1,50 @@
-# Architecture Decision Records (ADR)
+# 設計判断の記録 (ADR)
 
-このディレクトリには midna の設計判断 (Architecture Decision Records) を記録する。
+このディレクトリには、midna の設計に関わる **判断とその理由** を 1 件ずつ残す。
+方針や引き換えを伴う判断はここに書き、`docs/design/` 配下の design doc には判断の中身を書かず、ここへのリンクだけ置く。
 
-## 方針
+## 何を記録して、何を記録しないか
 
-- 方針・トレードオフを伴う判断は ADR として残す。実装上の細かい選択は対象外。
-- `docs/design/` 配下の design doc には判断の中身を書かず、ADR への相対リンクのみを置く。
-- 1 つの判断につき 1 ファイル。
+- 記録する: 方針、引き換えを伴う選択、後から覆すと影響が大きい決め事
+- 記録しない: 変数名や関数の切り方など、実装上の細かい判断
 
-## 命名
+## ファイル名のつけ方
 
 `NNNN-kebab-case-title.md`
 
-- `NNNN` は連番（ゼロ埋め 4 桁）。欠番は作らない。
-- 既存 ADR を覆す場合は新規 ADR を起こし、旧 ADR の `Status` を `Superseded by NNNN` に更新する。
+- `NNNN` は 4 桁の連番。欠番は作らない。
+- 既に決めたことを覆すときは新しい記録を起こし、古いほうの「状態」を `Superseded by NNNN` に書き換える。
 
-## フォーマット（MADR ライク）
+## 雛形
 
 ```markdown
 # NNNN - <タイトル>
 
-- Status: Accepted | Superseded by NNNN | Deprecated
-- Date: YYYY-MM-DD
-- Deciders: <氏名>
+- 状態: 採択 | NNNN により差し替え | 非推奨
+- 日付: YYYY-MM-DD
+- 決定者: <氏名>
 
-## Context
-（何を決めようとしているか、背景・制約）
+## 結論
+（採用する案を 1〜2 行で）
 
-## Decision
-（採用する選択肢）
+## 背景
+（何を決めようとしているか、前提や制約）
 
-## Rationale
-（なぜそれを選んだか）
+## 理由
+（なぜその案を選んだか）
 
-## Consequences
-- Positive: ...
-- Negative / Trade-offs: ...
+## 影響
+- 良い点: ...
+- 引き換え / 困る点: ...
 
-## Alternatives Considered
-（検討した他案と却下理由）
+## 他に検討した案
+（検討した別案と、選ばなかった理由）
 ```
 
-## 一覧
+「結論」を先頭に置くのは、上から読んでまず判断が分かるようにするため。
+
+## 現在の一覧
 
 - [0001 - 実装言語に Rust を採用](0001-use-rust.md)
-- [0002 - オフライン動作を基本とし、ブラウジング系ツールのみ外部通信を許可](0002-offline-first-with-browsing-exception.md)
-- [0003 - Provider 抽象を v0 から導入](0003-provider-abstraction-from-v0.md)
+- [0002 - 推論はオフライン、Web を見に行く道具だけ通信を許可](0002-offline-first-with-browsing-exception.md)
+- [0003 - LLM の提供元を差し替えやすい構造を v0 から入れる](0003-provider-abstraction-from-v0.md)

@@ -2,7 +2,7 @@
 
 ローカルで動く、自分専用の AI エージェント。
 
-推論はオフラインで完結する（[ADR 0002](docs/adr/0002-offline-first-with-browsing-exception.md)）。最新情報取得のためのブラウジング系ツールのみ、将来的に外部通信を許可する。
+推論はオフラインで完結する（[ADR 0002](docs/adr/0002-offline-first-with-browsing-exception.md)）。例外として、Web に情報を取りに行く道具にだけ将来的に外部通信を許可する。
 
 ## 前提
 
@@ -43,4 +43,4 @@ cargo run -- --verbose chat
 ## ドキュメント
 
 - [Design doc v0.1](docs/design/midna_design_doc_v0_1.md)
-- [Architecture Decision Records](docs/adr/README.md)
+- [設計判断の記録 (ADR)](docs/adr/README.md)

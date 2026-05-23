@@ -23,10 +23,10 @@ The primary goal is to create a highly extensible AI companion similar to Claude
 
 Midna は推論を**オフラインで完結**させることを基本姿勢とする:
 
-- local models / local execution / local file access / local memory
-- LLM 推論呼び出しは外部 API を使わない
+- 手元のモデル / 手元の実行 / 手元のファイル / 手元の記憶
+- LLM の呼び出しに外部 API は使わない
 
-例外として、最新情報取得のためのブラウジング系ツール (web fetch / web search) のみ外部通信を許可する。詳細は [ADR 0002](../adr/0002-offline-first-with-browsing-exception.md) を参照。
+例外として、最新情報を取りに行く道具（Web からの取得や Web 検索）にだけ外部通信を許可する。詳細は [ADR 0002](../adr/0002-offline-first-with-browsing-exception.md) を参照。
 
 ---
 
@@ -202,14 +202,14 @@ Midna should evolve into:
 
 ---
 
-# Decisions
+# 設計判断の記録
 
-設計判断は ADR (Architecture Decision Record) として `docs/adr/` 配下に記録する。design doc 本体には判断の中身を書かず、ADR への相対リンクのみを置く方針。
+設計に関わる判断は `docs/adr/` 配下に 1 件ずつ残す。この design doc には判断の中身を書かず、リンクだけ置く方針。
 
-主要 ADR:
+主な記録:
 
 - [ADR 0001 - 実装言語に Rust を採用](../adr/0001-use-rust.md)
-- [ADR 0002 - オフライン動作を基本とし、ブラウジング系ツールのみ外部通信を許可](../adr/0002-offline-first-with-browsing-exception.md)
-- [ADR 0003 - Provider 抽象を v0 から導入](../adr/0003-provider-abstraction-from-v0.md)
+- [ADR 0002 - 推論はオフライン、Web を見に行く道具だけ通信を許可](../adr/0002-offline-first-with-browsing-exception.md)
+- [ADR 0003 - LLM の提供元を差し替えやすい構造を v0 から入れる](../adr/0003-provider-abstraction-from-v0.md)
 
-ADR の運用ルールは [docs/adr/README.md](../adr/README.md) を参照。
+記録のやり方は [docs/adr/README.md](../adr/README.md) を参照。
