@@ -1,6 +1,6 @@
-# <プロジェクト名> Design Document v<X.Y>
+# <プロジェクト名> 設計書 v<X.Y>
 
-## Overview
+## 概要
 
 <このシステムが何を目指すのか、どんな課題を解こうとするのかを 3〜5 行で>
 
@@ -8,7 +8,7 @@
 
 ---
 
-# Core Philosophy
+# 基本方針
 
 ## 1. <方針 1 のタイトル>
 
@@ -30,7 +30,7 @@
 
 ---
 
-# High-Level Architecture
+# 全体構成
 
 ```mermaid
 flowchart TD
@@ -46,7 +46,7 @@ flowchart TD
 
 ---
 
-# Repository Structure
+# リポジトリ構成
 
 ```txt
 <project>/
@@ -55,7 +55,7 @@ flowchart TD
 
 ---
 
-# Permission System
+# 権限の仕組み
 
 <権限の仕組みが必要なら書く。なければセクションごと削る>
 
@@ -76,7 +76,7 @@ permissions:
 
 ---
 
-# CLI Examples
+# CLI コマンド例
 
 ```bash
 <project> <subcommand>
@@ -84,7 +84,7 @@ permissions:
 
 ---
 
-# Final Goal
+# 最終ゴール
 
 > <ビジョンを 1 文で>
 
