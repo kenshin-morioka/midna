@@ -32,11 +32,11 @@
 
 ## DB 設計
 
-なし。CLI ツールで永続化は持たない。会話履歴はプロセス内 `Vec<Message>` のみ。
+なし
 
 ## エンドポイント設計
 
-なし。midna は HTTP サーバを提供しない。Ollama に対する HTTP クライアントとして `POST {host}/api/chat` を呼ぶのみ（リクエストは `{model, messages, stream: false}`、レスポンスから `message.content` を取り出す）。
+なし
 
 ## エンドポイント以外の設計
 
@@ -69,7 +69,7 @@
 
 ## スクリプト
 
-なし。
+なし
 
 ## 外部ツール
 
