@@ -35,8 +35,3 @@
 （検討した別案と、選ばなかった理由）
 ```
 
-## 現在の一覧
-
-- [0001 - 実装言語に Rust を採用](0001-use-rust.md)
-- [0002 - 推論はオフライン、Web を見に行くツールだけ通信を許可](0002-offline-first-with-browsing-exception.md)
-- [0003 - LLM の提供元を差し替えやすい構造を v0 から入れる](0003-provider-abstraction-from-v0.md)
