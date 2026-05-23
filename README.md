@@ -42,5 +42,5 @@ cargo run -- --verbose chat
 
 ## ドキュメント
 
-- [docs/design/](docs/design/)
-- [docs/adr/](docs/adr/)
+- [docs/design/](docs/design/) — 設計ドキュメント
+- [docs/adr/](docs/adr/) — 設計判断の記録 (ADR)
