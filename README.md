@@ -42,5 +42,7 @@ cargo run -- --verbose chat
 
 ## ドキュメント
 
-- [Design doc v0.1](docs/design/midna_design_doc_v0_1.md)
-- [設計判断の記録 (ADR)](docs/adr/README.md)
+- [docs/design/midna_design_doc_v0_1.md](docs/design/midna_design_doc_v0_1.md)
+- [docs/adr/0001-use-rust.md](docs/adr/0001-use-rust.md)
+- [docs/adr/0002-offline-first-with-browsing-exception.md](docs/adr/0002-offline-first-with-browsing-exception.md)
+- [docs/adr/0003-provider-abstraction-from-v0.md](docs/adr/0003-provider-abstraction-from-v0.md)
