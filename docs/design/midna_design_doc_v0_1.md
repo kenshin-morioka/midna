@@ -1,5 +1,3 @@
-用語は [ユビキタス言語](../ubiquitous-language.md) を参照。
-
 # 背景
 
 自分専用に手元で動かせる AI エージェントが欲しい。Claude Code のような体験を、特定の提供元（プロバイダ）に縛られず、推論はオフラインで完結する形で再構成したい。最初の一歩として v0 を立ち上げる。
@@ -29,6 +27,10 @@
 - 並列エージェント実行ランタイム本体（async/tokio の足場だけ用意）
 - メモリ永続化、artifacts、router
 - ブラウジング系ツール本体（[ADR 0002](../adr/0002-offline-first-with-browsing-exception.md) で方針のみ）
+
+# ユビキタス言語
+
+[ユビキタス言語](../ubiquitous-language.md)
 
 # 実装方針
 
