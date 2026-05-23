@@ -1,211 +1,86 @@
-# Midna 設計書 v0.1
+# 背景
 
-## 概要
+自分専用に手元で動かせる AI エージェントが欲しい。Claude Code のような体験を、特定の提供元（プロバイダ）に縛られず、推論はオフラインで完結する形で再構成したい。最初の一歩として v0 を立ち上げる。
 
-Midna is a local-first AI operating environment that combines:
+# 目的
 
-- conversational AI
-- coding agent capabilities
-- multimodal generation
-- extensible tools
-- reusable skills
-- autonomous agents
+- 手元の LLM ランタイム（Ollama 等）と対話できる CLI を作る
+- 推論はオフラインで完結させる（例外は [ADR 0002](../adr/0002-offline-first-with-browsing-exception.md)）
+- 将来の拡張（tools / 他モード / 他 provider）を阻害しない構造で始める
 
-into a unified developer-focused platform.
+# スコープ
 
-The primary goal is to create a highly extensible AI companion similar to Claude Code, while remaining provider-agnostic and capable of running both local and remote models.
+## ゴール
 
----
+- `midna chat` で Ollama 経由のローカル LLM と対話できる
+- Rust の Cargo project として scaffold する（[ADR 0001](../adr/0001-use-rust.md)）
+- Provider 抽象を v0 から入れる（[ADR 0003](../adr/0003-provider-abstraction-from-v0.md)）
+- 設計判断は ADR に残す
 
-# 基本方針
+## ノンゴール
 
-## 1. Local-first
+- chat 以外のモード（code / image / video / multimodal）
+- tools（filesystem / shell / git / vision / media / network）の実装
+- agents / skills / commands / prompts の仕組み
+- Ollama 以外の provider（Anthropic / OpenAI / llama.cpp 直接 等）
+- ストリーミング応答
+- 並列エージェント実行ランタイム本体（async/tokio の足場だけ用意）
+- メモリ永続化、artifacts、router
+- ブラウジング系ツール本体（[ADR 0002](../adr/0002-offline-first-with-browsing-exception.md) で方針のみ）
 
-Midna は推論を**オフラインで完結**させることを基本姿勢とする:
+# 実装方針
 
-- 手元のモデル / 手元の実行 / 手元のファイル / 手元の記憶
-- LLM の呼び出しに外部 API は使わない
+## DB 設計
 
-例外として、最新情報を取りに行くツール（Web からの取得や Web 検索）にだけ外部通信を許可する。詳細は [ADR 0002](../adr/0002-offline-first-with-browsing-exception.md) を参照。
+なし。CLI ツールで永続化は持たない。会話履歴はプロセス内 `Vec<Message>` のみ。
 
----
+## エンドポイント設計
 
-## 2. Tool-driven AI
+なし。midna は HTTP サーバを提供しない。Ollama に対する HTTP クライアントとして `POST {host}/api/chat` を呼ぶのみ（リクエストは `{model, messages, stream: false}`、レスポンスから `message.content` を取り出す）。
 
-LLMs should not directly solve everything from context alone.
+## エンドポイント以外の設計
 
-Midna operates through tools:
+- 全体構成（モジュール）
+  ```mermaid
+  flowchart TD
+      CLI[CLI / clap]
+      Session[Session]
+      ChatMode[modes::chat]
+      Provider[Provider trait]
+      Ollama[OllamaProvider]
+      Error[MidnaError]
+      Perm[Permissions / Policy]
 
-- filesystem access
-- shell execution
-- git operations
-- image analysis
-- media generation
-- project inspection
+      CLI --> ChatMode
+      ChatMode --> Session
+      ChatMode --> Provider
+      Provider --> Ollama
+      Ollama --> Error
+      ChatMode --> Perm
+  ```
+- `Provider` trait（`async fn chat(&[Message]) -> Result<Message, MidnaError>`、`Send + Sync`）
+- `OllamaProvider` が `reqwest` で `/api/chat` を呼ぶ。接続失敗は `MidnaError::Connect` に変換して親切なメッセージを返す
+- `Session` は `Vec<Message>` を保持し `push` / `pop` / `messages` を提供
+- `modes::chat::run` は stdin を 1 行ずつ読んで provider に投げる REPL。`exit` / `quit` / EOF で終了
+- `MidnaError`（thiserror）でライブラリ境界のエラーを公開
+- `Permissions` は `Allow` / `Ask` / `Deny` の enum と固定 `Allow` を返す `Policy`（tools 導入時に拡張）
+- `Cli`（clap derive）で `midna chat [--model] [--host] [--verbose]`、env は `MIDNA_MODEL` / `MIDNA_OLLAMA_HOST`
+- 主要な依存: tokio (full), reqwest (rustls-tls), serde, serde_json, clap, anyhow, thiserror, async-trait, tracing。dev に wiremock
 
-The model acts as a planner and orchestrator.
+## スクリプト
 
----
+なし。
 
-## 3. Mode-based UX
+## 外部ツール
 
-Midna supports multiple operational modes:
+- [Ollama](https://ollama.com/) — 手元の LLM ランタイム。`ollama serve` を起動し `ollama pull llama3.1:8b` 等でモデルを取得しておく
+- Cargo（Rust toolchain）— ビルド・テスト・実行
+- 将来: Web 取得・Web 検索のための外部 API（[ADR 0002](../adr/0002-offline-first-with-browsing-exception.md) の例外として通信を許可）
 
-- chat
-- code
-- image
-- video
-- multimodal
+# 懸念点
 
-Modes define intent and behavior.
-
----
-
-## 4. Extensibility First
-
-Users should be able to extend Midna through:
-
-- commands
-- skills
-- agents
-- prompts
-- tools
-
-without modifying core source code.
-
----
-
-# 全体構成
-
-```mermaid
-flowchart TD
-    CLI[CLI]
-    Session[Session Layer]
-    Modes[Modes]
-    Agents[Agents]
-    Commands[Commands]
-    Tools[Tool Runtime]
-    Providers[Providers]
-    Memory[Memory]
-    Artifacts[Artifacts]
-
-    CLI --> Session
-    Session --> Modes
-    Session --> Agents
-    Session --> Commands
-    Modes --> Tools
-    Agents --> Tools
-    Commands --> Tools
-    Tools --> Providers
-    Tools --> Memory
-    Tools --> Artifacts
-```
-
----
-
-# リポジトリ構成
-
-実装は Rust の Cargo project として構成する（言語選定は [ADR 0001](../adr/0001-use-rust.md)）。
-
-```txt
-midna/
-├── Cargo.toml
-├── Cargo.lock
-├── src/
-│   ├── main.rs              # CLI entrypoint
-│   ├── lib.rs               # 公開モジュールルート
-│   ├── cli.rs               # 引数パース
-│   ├── session.rs           # 会話履歴 + ループ
-│   ├── error.rs             # MidnaError
-│   ├── permissions.rs       # Permission policy
-│   ├── modes/
-│   │   ├── chat.rs
-│   │   ├── code.rs          # (future)
-│   │   ├── image.rs         # (future)
-│   │   ├── video.rs         # (future)
-│   │   └── multimodal.rs    # (future)
-│   ├── providers/
-│   │   ├── mod.rs           # Provider trait
-│   │   └── ollama.rs
-│   ├── agents/              # (future)
-│   ├── commands/            # (future)
-│   ├── skills/              # (future)
-│   ├── prompts/             # (future)
-│   └── tools/               # (future)
-│       ├── filesystem.rs
-│       ├── shell.rs
-│       ├── git.rs
-│       ├── vision.rs
-│       ├── media.rs
-│       └── network.rs
-├── tests/
-├── docs/
-│   ├── design/
-│   └── adr/
-└── tmp/
-```
-
-`(future)` の付いたモジュールは v0 では未実装。実際に必要になったタイミングで追加する。
-
----
-
-# 権限
-
-Permission levels:
-
-| Level | Meaning               |
-| ----- | --------------------- |
-| allow | Execute automatically |
-| ask   | Require confirmation  |
-| deny  | Disallowed            |
-
-Example:
-
-```yaml
-permissions:
-  read_file: allow
-  write_file: ask
-  shell: ask
-  delete_file: deny
-  git_push: deny
-```
-
----
-
-# CLI コマンド例
-
-```bash
-midna chat
-midna code
-midna image
-midna video
-
-midna "fix failing tests"
-
-midna review app/models/user.rb
-
-midna --model llama3.1:8b
-midna --agent rails_reviewer
-```
-
----
-
-# ゴール
-
-Midna should evolve into:
-
-> A local-first extensible AI operating environment for software creation and multimodal workflows.
-
----
-
-# 設計判断の記録
-
-設計に関わる判断は `docs/adr/` 配下に 1 件ずつ残す。この design doc には判断の中身を書かず、リンクだけ置く方針。
-
-主な記録:
-
-- [ADR 0001 - 実装言語に Rust を採用](../adr/0001-use-rust.md)
-- [ADR 0002 - 推論はオフライン、Web を見に行くツールだけ通信を許可](../adr/0002-offline-first-with-browsing-exception.md)
-- [ADR 0003 - LLM の提供元を差し替えやすい構造を v0 から入れる](../adr/0003-provider-abstraction-from-v0.md)
-
-記録のやり方は [docs/adr/README.md](../adr/README.md) を参照。
+- 初回のモデル取得と Ollama 導入はネット接続が必要。完全オフライン環境では事前準備が要る
+- クラウドの最新の高性能モデルに追従するには、後で明示的な切り替え機構を足す必要がある（v0 ではスコープ外）
+- `async_trait` は v0 で使うが、trait の async fn が言語標準で安定したら剥がす
+- ブラウジング系ツールを実装するときは、許可する通信先のルールを別途決める（権限の仕組み側で扱う）
+- v0 では Ctrl+C のシグナル処理を実装しない（`exit` / `quit` / EOF で抜ける運用）

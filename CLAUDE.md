@@ -10,9 +10,10 @@
 
 是正を受けたら、原則を該当ファイルに追記し、リポジトリ内の同型違反を grep して同じターンで直す。
 
-## 設計判断は ADR、概観は design doc
+## 設計判断は ADR、機能・改修の設計は design doc
 
-方針や引き換えを伴う判断は `docs/adr/NNNN-kebab.md` に残し、design doc にはリンクだけ置く。実装の細かい選択は ADR にしない。
+- 方針や引き換えを伴う判断は `docs/adr/NNNN-kebab.md` に 1 件ずつ残す（プロダクト全体の方針は ADR の集合で表現する）
+- 機能や改修の作業ごとの設計は `docs/design/<name>.md` に書く（雛形: `.claude/templates/design-doc.md`）
 
 ## ADR は結論先頭、自分の主語で、両面を書く
 
