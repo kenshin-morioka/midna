@@ -11,8 +11,8 @@
 
 1. テンプレを目的の場所にコピーする
    ```sh
-   cp .claude/templates/adr.md docs/adr/0004-<kebab-title>.md
-   cp .claude/templates/design-doc.md docs/design/<name>_v0_1.md
+   cp docs/templates/adr.md docs/adr/0004-<kebab-title>.md
+   cp docs/templates/design-doc.md docs/design/<name>_v0_1.md
    ```
 2. `<...>` の placeholder を順に埋める
 3. ADR は `docs/adr/README.md` の一覧にもリンクを追加する
