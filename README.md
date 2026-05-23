@@ -19,14 +19,13 @@ ollama pull llama3.1:8b     # モデル取得（初回のみ wifi 必要）
 ## セットアップ
 
 ```sh
-cargo build
-cargo test                  # 外部通信なし、wiremock で完結
+cargo install --path .       # `midna` を PATH に入れる
 ```
 
 ## 使い方
 
 ```sh
-cargo run -- chat
+midna chat
 > こんにちは
 ```
 
@@ -35,9 +34,17 @@ cargo run -- chat
 オプション:
 
 ```sh
-cargo run -- chat --model llama3.1:8b --host http://localhost:11434
-MIDNA_MODEL=llama3.1:8b MIDNA_OLLAMA_HOST=http://localhost:11434 cargo run -- chat
-cargo run -- --verbose chat
+midna chat --model llama3.1:8b --host http://localhost:11434
+MIDNA_MODEL=llama3.1:8b MIDNA_OLLAMA_HOST=http://localhost:11434 midna chat
+midna --verbose chat
+```
+
+## 開発
+
+```sh
+cargo build
+cargo test                  # 外部通信なし、wiremock で完結
+cargo run -- chat           # インストール前に試す
 ```
 
 ## ドキュメント
