@@ -1,6 +1,6 @@
-# Midna Design Document v0.1
+# Midna 設計書 v0.1
 
-## Overview
+## 概要
 
 Midna is a local-first AI operating environment that combines:
 
@@ -17,7 +17,7 @@ The primary goal is to create a highly extensible AI companion similar to Claude
 
 ---
 
-# Core Philosophy
+# 基本方針
 
 ## 1. Local-first
 
@@ -75,7 +75,7 @@ without modifying core source code.
 
 ---
 
-# High-Level Architecture
+# 全体構成
 
 ```mermaid
 flowchart TD
@@ -103,7 +103,7 @@ flowchart TD
 
 ---
 
-# Repository Structure
+# リポジトリ構成
 
 実装は Rust の Cargo project として構成する（言語選定は [ADR 0001](../adr/0001-use-rust.md)）。
 
@@ -149,7 +149,7 @@ midna/
 
 ---
 
-# Permission System
+# 権限
 
 Permission levels:
 
@@ -172,7 +172,7 @@ permissions:
 
 ---
 
-# CLI Examples
+# CLI コマンド例
 
 ```bash
 midna chat
@@ -190,7 +190,7 @@ midna --agent rails_reviewer
 
 ---
 
-# Final Goal
+# ゴール
 
 Midna should evolve into:
 
