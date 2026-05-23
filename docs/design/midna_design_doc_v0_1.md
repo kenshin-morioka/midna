@@ -77,32 +77,28 @@ without modifying core source code.
 
 # High-Level Architecture
 
-```txt
-                    ┌─────────────────┐
-                    │      CLI        │
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │  Session Layer  │
-                    └────────┬────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
- ┌───────▼────────┐ ┌────────▼────────┐ ┌────────▼────────┐
- │     Modes      │ │     Agents      │ │    Commands     │
- └───────┬────────┘ └────────┬────────┘ └────────┬────────┘
-         │                   │                   │
-         └───────────────────┼───────────────────┘
-                             │
-                    ┌────────▼────────┐
-                    │   Tool Runtime   │
-                    └────────┬────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
- ┌───────▼────────┐ ┌────────▼────────┐ ┌────────▼────────┐
- │   Providers    │ │    Memory       │ │    Artifacts    │
- └────────────────┘ └─────────────────┘ └─────────────────┘
+```mermaid
+flowchart TD
+    CLI[CLI]
+    Session[Session Layer]
+    Modes[Modes]
+    Agents[Agents]
+    Commands[Commands]
+    Tools[Tool Runtime]
+    Providers[Providers]
+    Memory[Memory]
+    Artifacts[Artifacts]
+
+    CLI --> Session
+    Session --> Modes
+    Session --> Agents
+    Session --> Commands
+    Modes --> Tools
+    Agents --> Tools
+    Commands --> Tools
+    Tools --> Providers
+    Tools --> Memory
+    Tools --> Artifacts
 ```
 
 ---
