@@ -2,7 +2,7 @@
 
 ローカルで動く、自分専用の AI エージェント。
 
-推論はオフラインで完結する（[ADR 0002](docs/adr/0002-offline-first-with-browsing-exception.md)）。例外として、Web に情報を取りに行く道具にだけ将来的に外部通信を許可する。
+推論はオフラインで完結する（[ADR 0002](docs/adr/0002-offline-first-with-browsing-exception.md)）。例外として、Web に情報を取りに行くツールにだけ将来的に外部通信を許可する。
 
 ## 前提
 
