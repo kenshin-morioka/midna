@@ -1,0 +1,21 @@
+name: Auto-assign PR
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  assign:
+    if: github.event.pull_request.user.type == 'User'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign PR author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: gh pr edit "$PR" --add-assignee "$AUTHOR" --repo "$REPO"
