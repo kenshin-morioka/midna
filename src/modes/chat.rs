@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use tokio::io::{AsyncBufReadExt, BufReader};
 
 use crate::error::MidnaError;
-use crate::providers::{Message, Provider};
+use crate::providers::{Message, Provider, Role};
 use crate::session::Session;
 
 const SYSTEM_PROMPT: &str = "You are Midna, a local-first AI assistant running on the user's machine. Be concise and helpful.";
@@ -44,6 +44,13 @@ pub async fn run<P: Provider>(provider: &P) -> Result<(), MidnaError> {
 
         match provider.chat(session.messages()).await {
             Ok(reply) => {
+                // プロバイダ実装が assistant 以外の role を返した場合、それを応答として
+                // 表示・履歴化すると次ターンの /api/chat が壊れた履歴を引き継ぐため弾く
+                if reply.role != Role::Assistant {
+                    eprintln!("error: provider returned a non-assistant reply");
+                    session.pop();
+                    continue;
+                }
                 println!("{}\n", reply.content);
                 session.push(reply);
             }

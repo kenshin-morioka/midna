@@ -6,7 +6,10 @@ use serde::{Deserialize, Serialize};
 use crate::error::MidnaError;
 use crate::providers::{Message, Provider};
 
-const DEFAULT_TIMEOUT: Duration = Duration::from_secs(120);
+// 全体タイムアウトだと生成に時間のかかる LLM 応答を誤って打ち切り、
+// is_timeout() 経由で「接続できない」という誤った Connect エラーになる。
+// 接続確立だけに短い上限を設け、生成時間そのものは制限しない。
+const DEFAULT_CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
 
 pub struct OllamaProvider {
     host: String,
@@ -17,7 +20,7 @@ pub struct OllamaProvider {
 impl OllamaProvider {
     pub fn new(host: impl Into<String>, model: impl Into<String>) -> Result<Self, MidnaError> {
         let http = reqwest::Client::builder()
-            .timeout(DEFAULT_TIMEOUT)
+            .connect_timeout(DEFAULT_CONNECT_TIMEOUT)
             .build()?;
         Ok(Self {
             host: host.into(),
