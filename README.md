@@ -25,18 +25,22 @@ cargo install --path .       # `midna` を PATH に入れる
 ## 使い方
 
 ```sh
-midna chat
-> こんにちは
+midna
+> このプロジェクトの構成を教えて
 ```
+
+引数なしで起動するとエージェントモード。ファイルの読み書き・ディレクトリ一覧・シェルコマンド実行ができ、ファイル書き込みとコマンド実行は実行前に y/N で確認される（[ADR 0005](docs/adr/0005-risk-based-permissions.md)）。tool calling 対応モデル（llama3.1 / qwen2.5 など）が必要。
+
+ツールなしの対話だけしたいときは `midna chat`。
 
 `exit` / `quit` / `Ctrl+D` で終了。
 
 オプション:
 
 ```sh
-midna chat --model llama3.1:8b --host http://localhost:11434
-MIDNA_MODEL=llama3.1:8b MIDNA_OLLAMA_HOST=http://localhost:11434 midna chat
-midna --verbose chat
+midna --model llama3.1:8b --host http://localhost:11434
+MIDNA_MODEL=llama3.1:8b MIDNA_OLLAMA_HOST=http://localhost:11434 midna
+midna --verbose
 ```
 
 ## 開発
@@ -44,7 +48,7 @@ midna --verbose chat
 ```sh
 cargo build
 cargo test                  # 外部通信なし、wiremock で完結
-cargo run -- chat           # インストール前に試す
+cargo run                   # インストール前に試す
 ```
 
 ## ドキュメント
