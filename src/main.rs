@@ -4,7 +4,9 @@ use tracing_subscriber::EnvFilter;
 
 use midna::cli::{Cli, Command};
 use midna::modes;
+use midna::permissions::Policy;
 use midna::providers::ollama::OllamaProvider;
+use midna::tools::ToolRegistry;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -17,9 +19,15 @@ async fn main() -> Result<()> {
     };
     tracing_subscriber::fmt().with_env_filter(filter).init();
 
-    match cli.command {
-        Command::Chat { model, host } => {
-            let provider = OllamaProvider::new(host, model)?;
+    let provider = OllamaProvider::new(cli.host, cli.model)?;
+
+    match cli.command.unwrap_or(Command::Agent) {
+        Command::Agent => {
+            let registry = ToolRegistry::builtin();
+            let policy = Policy::new();
+            modes::agent::run(&provider, &registry, &policy).await?;
+        }
+        Command::Chat => {
             modes::chat::run(&provider).await?;
         }
     }

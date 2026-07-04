@@ -8,8 +8,27 @@ use clap::{Parser, Subcommand};
     long_about = None
 )]
 pub struct Cli {
+    /// 省略時はエージェントモード（ツール実行あり）で起動する
     #[command(subcommand)]
-    pub command: Command,
+    pub command: Option<Command>,
+
+    /// Model name to use with the provider.
+    #[arg(
+        long,
+        env = "MIDNA_MODEL",
+        default_value = "llama3.1:8b",
+        global = true
+    )]
+    pub model: String,
+
+    /// Host URL of the Ollama-compatible runtime.
+    #[arg(
+        long,
+        env = "MIDNA_OLLAMA_HOST",
+        default_value = "http://localhost:11434",
+        global = true
+    )]
+    pub host: String,
 
     /// Enable verbose tracing output (debug level).
     #[arg(long, short, global = true)]
@@ -18,14 +37,9 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Start an interactive chat REPL backed by a local LLM provider.
-    Chat {
-        /// Model name to use with the provider.
-        #[arg(long, env = "MIDNA_MODEL", default_value = "llama3.1:8b")]
-        model: String,
+    /// Start an agent REPL that can read/write files and run shell commands (default).
+    Agent,
 
-        /// Host URL of the Ollama-compatible runtime.
-        #[arg(long, env = "MIDNA_OLLAMA_HOST", default_value = "http://localhost:11434")]
-        host: String,
-    },
+    /// Start a plain chat REPL without tools.
+    Chat,
 }

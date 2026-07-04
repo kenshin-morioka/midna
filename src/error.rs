@@ -16,4 +16,7 @@ pub enum MidnaError {
 
     #[error("provider error: {0}")]
     Provider(String),
+
+    #[error("tool error: {0}")]
+    Tool(String),
 }
