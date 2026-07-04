@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 
 use crate::error::MidnaError;
-use crate::providers::{Message, Provider};
+use crate::providers::{Message, Provider, ToolSpec};
 
 // 全体タイムアウトだと生成に時間のかかる LLM 応答を誤って打ち切り、
 // is_timeout() 経由で「接続できない」という誤った Connect エラーになる。
@@ -43,6 +43,8 @@ struct ChatRequest<'a> {
     model: &'a str,
     messages: &'a [Message],
     stream: bool,
+    #[serde(skip_serializing_if = "<[ToolSpec]>::is_empty")]
+    tools: &'a [ToolSpec],
 }
 
 #[derive(Deserialize)]
@@ -52,12 +54,17 @@ struct ChatResponse {
 
 #[async_trait]
 impl Provider for OllamaProvider {
-    async fn chat(&self, messages: &[Message]) -> Result<Message, MidnaError> {
+    async fn chat(
+        &self,
+        messages: &[Message],
+        tools: &[ToolSpec],
+    ) -> Result<Message, MidnaError> {
         let url = format!("{}/api/chat", self.host.trim_end_matches('/'));
         let body = ChatRequest {
             model: &self.model,
             messages,
             stream: false,
+            tools,
         };
 
         let resp = self.http.post(&url).json(&body).send().await.map_err(|e| {

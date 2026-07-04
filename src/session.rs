@@ -28,6 +28,12 @@ impl Session {
         &self.messages
     }
 
+    /// 履歴を `len` 件まで巻き戻す。エラー時に「失敗したターン全体」を
+    /// なかったことにするために使う。
+    pub fn truncate(&mut self, len: usize) {
+        self.messages.truncate(len);
+    }
+
     pub fn len(&self) -> usize {
         self.messages.len()
     }
