@@ -3,8 +3,9 @@
 | 用語 | 説明 | 補足 | コード上の表現 |
 | --- | --- | --- | --- |
 | Midna | AI エージェント名 | ドキュメント本文では `Midna` | `midna` |
-| Mode | Midna の動作モード | chat / code / image / video / multimodal | `src/modes/` |
-| Tool | Midna が LLM に提供する機能 | filesystem / shell / web fetch / git / vision / media など | - |
+| Mode | Midna の動作モード | agent / chat / code / image / video / multimodal | `src/modes/` |
+| Tool | Midna が LLM に提供する機能 | filesystem / shell / web fetch / git / vision / media など | `Tool` |
+| Risk | Tool の操作が持つ危険度 | read-only / write / execute。権限判定の入力 | `Risk` |
 | Agent | 自律的に動く処理単位 | - | - |
 | Skill | 再利用可能な手順 | - | - |
 | Command | ユーザーが定義する拡張コマンド | - | - |
